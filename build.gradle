@@ -2,14 +2,15 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.7'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
-	id 'war'
-}
-war {
-	archiveName 'ROOT.war'
+//	id 'war'
 }
 
-bootWar.enabled = false
-war.enabled = true
+//war {
+//	archiveName 'ROOT.war'
+//}
+//
+//bootWar.enabled = false
+//war.enabled = true
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
