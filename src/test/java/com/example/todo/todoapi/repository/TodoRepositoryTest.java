@@ -1,5 +1,7 @@
 package com.example.todo.todoapi.repository;
 
+import com.example.todo.projectapi.entity.ProjectEntity;
+import com.example.todo.projectapi.repository.ProjectRepository;
 import com.example.todo.todoapi.entity.TodoEntity;
 import com.example.todo.userapi.entity.UserEntity;
 import com.example.todo.userapi.repository.UserRepository;
@@ -22,6 +24,10 @@ class TodoRepositoryTest {
     TodoRepository todoRepository;
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    ProjectRepository projectRepository;
+
 
     /*@BeforeEach
     void insertTest() {

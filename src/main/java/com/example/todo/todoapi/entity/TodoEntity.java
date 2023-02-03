@@ -2,6 +2,7 @@ package com.example.todo.todoapi.entity;
 
 // 일정관리 프로그램
 
+import com.example.todo.logapi.entity.LogEntity;
 import com.example.todo.projectapi.entity.ProjectEntity;
 import com.example.todo.userapi.entity.UserEntity;
 import lombok.*;
@@ -10,8 +11,10 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-@Setter @Getter @ToString
+@Setter @Getter @ToString(exclude = "logs")
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "todoId")
@@ -53,5 +56,8 @@ public class TodoEntity {
     // 할 일 추가, 수정시 사용할 외래키
     @Column(name = "project_id")
     private String projectId;
+
+    @OneToMany(mappedBy = "todo") // 상대방 엔터티에 조인되는 필드명(상대방의)을 씀
+    private List<LogEntity> logs = new ArrayList<>();
 
 }

@@ -1,6 +1,7 @@
 package com.example.todo.projectapi.entity;
 
 
+import com.example.todo.todoapi.entity.TodoEntity;
 import com.example.todo.userapi.entity.UserEntity;
 import com.example.todo.userapi.entity.UserProjectEntity;
 import lombok.*;
@@ -14,11 +15,11 @@ import java.util.List;
 
 @Setter
 @Getter
-@ToString
+@ToString(exclude = "todos")
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "projectId")
-@Builder
+//@Builder
 
 @Entity
 @Table(name = "tbl_project")
@@ -51,6 +52,10 @@ public class ProjectEntity {
 
     @OneToMany(mappedBy = "project")
     private List<UserProjectEntity> userProjects = new ArrayList<>();
+
+    @OneToMany(mappedBy = "project") // 상대방 엔터티에 조인되는 필드명(상대방의)을 씀
+    private List<TodoEntity> todos = new ArrayList<>();
+
 
 
 }
