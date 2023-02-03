@@ -36,6 +36,10 @@ public class UserEntity {
     @CreationTimestamp
     private LocalDateTime joinDate;
 
+
+    @OneToMany(mappedBy = "user")
+    private List<UserProjectEntity> userProjects = new ArrayList<>();
+
 }
 
 
