@@ -52,4 +52,17 @@ class ProjectRepositoryTest {
 
     }
 
+
+    @Test
+    @DisplayName("유저 아이디로 프로젝트 조회")
+    @Transactional
+    void test1(){
+//
+
+        List<ProjectEntity> projects = projectRepository.findByUserId("402880af86068cce0186068cd7640002");
+
+        int a=1;
+
+    }
+
 }
