@@ -1,6 +1,7 @@
 package com.example.todo.projectapi.entity;
 
 
+import com.example.todo.logapi.entity.LogEntity;
 import com.example.todo.todoapi.entity.TodoEntity;
 import com.example.todo.userapi.entity.UserEntity;
 import com.example.todo.userapi.entity.UserProjectEntity;
@@ -55,6 +56,7 @@ public class ProjectEntity {
 
     @OneToMany(mappedBy = "project") // 상대방 엔터티에 조인되는 필드명(상대방의)을 씀
     private List<TodoEntity> todos = new ArrayList<>();
+
 
 
 
