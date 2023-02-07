@@ -1,19 +1,22 @@
 package com.example.todo.projectapi.repository;
 
+import com.example.todo.logapi.dto.LogDTO;
 import com.example.todo.logapi.entity.LogEntity;
+import com.example.todo.projectapi.dto.ProjectDTO;
 import com.example.todo.projectapi.entity.ProjectEntity;
+import com.example.todo.todoapi.dto.TodoDTO;
 import com.example.todo.todoapi.entity.TodoEntity;
 import com.example.todo.todoapi.repository.TodoRepository;
+import com.example.todo.userapi.entity.UserProjectEntity;
+import com.example.todo.userapi.repository.UserProjectRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class ProjectRepositoryTest {
@@ -23,6 +26,10 @@ class ProjectRepositoryTest {
 
     @Autowired
     TodoRepository todoRepository;
+
+
+    @Autowired
+    UserProjectRepository userProjectRepository;
 
     @Test
     @DisplayName("프로젝트 아이디로 하위의 모든 로그 조회")
@@ -40,14 +47,70 @@ class ProjectRepositoryTest {
 
 
 
-        TodoEntity dept
+        TodoEntity todo
                 = todoRepository.findById("todoid1")
                 .orElseThrow();
 
-        List<LogEntity> logs = dept.getLogs();
+        List<LogEntity> logs = todo.getLogs();
 
 
         logs.forEach(System.out::println);
+
+
+    }
+
+
+
+    @Test
+    @DisplayName("프로젝트 아이디로 하위의 모든 로그 조회")
+    @Transactional
+    void test2(){
+        ProjectEntity projectEntity = projectRepository.findById("id1").orElseThrow();
+
+        List<String> members = new ArrayList<>();
+
+        List<UserProjectEntity> entities = userProjectRepository.findByProject(projectEntity);
+        for(UserProjectEntity entity : entities){
+            members.add(entity.getUser().getUserName());
+        }
+
+        List<TodoDTO> todos = new ArrayList<>();
+        for(TodoEntity todoEntity : projectEntity.getTodos()){
+            List<LogDTO> logs = new ArrayList<>();
+            for(LogEntity logEntity : todoEntity.getLogs()){
+                LogDTO logDto = LogDTO.builder()
+                        .logId(logEntity.getLogId())
+                        .title(logEntity.getTitle())
+                        .contents(logEntity.getContents())
+                        .done(logEntity.isDone())
+                        .createDate(logEntity.getCreateDate())
+                        .userName(logEntity.getUser().getUserName())
+                        .build();
+                logs.add(logDto);
+            }
+
+            TodoDTO todoDto = TodoDTO.builder()
+                    .todoId(todoEntity.getTodoId())
+                    .title(todoEntity.getTitle())
+                    .createDate(todoEntity.getCreateDate())
+                    .done(todoEntity.isDone())
+                    .userName(todoEntity.getUser().getUserName())
+                    .logs(logs)
+                    .build();
+            todos.add(todoDto);
+        }
+
+        ProjectDTO resultDto = ProjectDTO.builder()
+                .projectId(projectEntity.getProjectId())
+                .title(projectEntity.getTitle())
+                .content(projectEntity.getContents())
+                .done(projectEntity.isDone())
+                .createDate(projectEntity.getCreateDate())
+                .members(members)
+                .memberCount(members.size())
+                .todos(todos)
+                .build();
+        int a=1;
 
 
     }

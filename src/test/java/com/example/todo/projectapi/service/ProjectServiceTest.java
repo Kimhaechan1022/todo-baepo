@@ -1,5 +1,6 @@
 package com.example.todo.projectapi.service;
 
+import com.example.todo.projectapi.dto.ProjectDTO;
 import com.example.todo.projectapi.dto.ProjectListDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,21 @@ class ProjectServiceTest {
         ProjectListDTO resDto = projectService.getCurrentUserProjectInfo("402880af86068cce0186068cd7640002");
 
         assertEquals("project_title",resDto.getList().get(0).getProjectTitle());
+
+
+    }
+
+
+    @Test
+    @DisplayName("프로젝트 아이디로 모든 세부사항 조회, DTO 생성, 반환")
+    @Transactional
+    @Rollback
+    void test2() {
+
+
+        ProjectDTO result = projectService.getProjectDetails("id1");
+
+        int a=1;
 
 
     }
