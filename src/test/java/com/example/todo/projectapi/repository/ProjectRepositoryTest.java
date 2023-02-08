@@ -7,6 +7,7 @@ import com.example.todo.projectapi.entity.ProjectEntity;
 import com.example.todo.todoapi.dto.TodoDTO;
 import com.example.todo.todoapi.entity.TodoEntity;
 import com.example.todo.todoapi.repository.TodoRepository;
+import com.example.todo.userapi.dto.UserIdDTO;
 import com.example.todo.userapi.entity.UserProjectEntity;
 import com.example.todo.userapi.repository.UserProjectRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -67,12 +68,12 @@ class ProjectRepositoryTest {
     void test2(){
         ProjectEntity projectEntity = projectRepository.findById("id1").orElseThrow();
 
-        List<String> members = new ArrayList<>();
+        List<UserIdDTO> members = new ArrayList<>();
 
         List<UserProjectEntity> entities = userProjectRepository.findByProject(projectEntity);
-        for(UserProjectEntity entity : entities){
-            members.add(entity.getUser().getUserName());
-        }
+//        for(UserProjectEntity entity : entities){
+//            members.add(entity.getUser().getUserName());
+//        }
 
         List<TodoDTO> todos = new ArrayList<>();
         for(TodoEntity todoEntity : projectEntity.getTodos()){

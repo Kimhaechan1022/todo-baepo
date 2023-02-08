@@ -3,6 +3,7 @@ package com.example.todo.projectapi.service;
 
 import com.example.todo.logapi.dto.LogDTO;
 import com.example.todo.logapi.entity.LogEntity;
+import com.example.todo.projectapi.dto.ProjectCreateDTO;
 import com.example.todo.projectapi.dto.ProjectDTO;
 import com.example.todo.projectapi.dto.ProjectDetailsDTO;
 import com.example.todo.projectapi.dto.ProjectListDTO;
@@ -11,14 +12,17 @@ import com.example.todo.projectapi.exceptions.ProjectNotFoundException;
 import com.example.todo.projectapi.repository.ProjectRepository;
 import com.example.todo.todoapi.dto.TodoDTO;
 import com.example.todo.todoapi.entity.TodoEntity;
+import com.example.todo.userapi.dto.UserIdDTO;
 import com.example.todo.userapi.entity.UserEntity;
 import com.example.todo.userapi.entity.UserProjectEntity;
 import com.example.todo.userapi.repository.UserProjectRepository;
 import com.example.todo.userapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,11 +92,12 @@ public class ProjectService {
     public ProjectDTO getProjectDetails(String projectId){
         ProjectEntity projectEntity = projectRepository.findById(projectId).orElseThrow();
 
-        List<String> members = new ArrayList<>();
+        List<UserIdDTO> members = new ArrayList<>();
 
         List<UserProjectEntity> entities = userProjectRepository.findByProject(projectEntity);
         for(UserProjectEntity entity : entities){
-            members.add(entity.getUser().getUserName());
+            UserIdDTO userIdDto = UserIdDTO.builder().userId(entity.getUser().getId()).userName(entity.getUser().getUserName()).build();
+            members.add(userIdDto);
         }
 
         List<TodoDTO> todos = new ArrayList<>();
@@ -131,10 +136,51 @@ public class ProjectService {
                 .memberCount(members.size())
                 .todos(todos)
                 .build();
-
         return resultDto;
     }
 
 
+    public ProjectListDTO createProject(ProjectCreateDTO projectCreateDTO){
 
+        ProjectEntity newProject = ProjectEntity.builder()
+                .title(projectCreateDTO.getTitle())
+                .userId(projectCreateDTO.getUserId())
+                .contents(projectCreateDTO.getContent())
+                .done(false)
+                .createDate(LocalDateTime.now())
+                .build();
+        UserEntity user = userRepository.findById(projectCreateDTO.getUserId()).orElseThrow();
+        newProject.setUser(user);
+
+        ProjectEntity save = projectRepository.save(newProject);
+
+        // 조회 유저 없을시 예외처리 수행행함 // 멤버가 없을때,
+
+        List<UserProjectEntity> userProjects = new ArrayList<>();
+
+        for(UserIdDTO userIdDto : projectCreateDTO.getMembers()){
+            UserEntity member = userRepository.findById(userIdDto.getUserId()).orElseThrow();
+            UserProjectEntity userProjectEntity = UserProjectEntity.builder()
+                    .project(newProject)
+                    .user(member)
+                    .build();
+            userProjectRepository.save(userProjectEntity);
+            userProjects.add(userProjectEntity);
+        }
+
+        // 작성자 본인을 멤버에 추가해야함
+        UserProjectEntity userProjectEntity = UserProjectEntity.builder()
+                .project(newProject)
+                .user(user)
+                .build();
+        userProjects.add(userProjectEntity);
+
+        newProject.setUserProjects(userProjects);
+        projectRepository.save(newProject);
+
+        return getCurrentUserProjectInfo(projectCreateDTO.getUserId());
     }
+
+
+
+}
